@@ -33,11 +33,10 @@ function create_user(object $pdo, string $username, string $email, string $pwd){
         ]);
         $pdo = null; // Close the connection
         $stmt = null; // Close the statement
-        header("Location: ../login.php?signup=success");
+        header("Location: ../../login.php?signup=success");
     } catch (PDOException $e) {
         $pdo = null; // Close the connection
-        // echo "Error: " . $e->getMessage();
-        header("Location: ../signup.php?error=stmtfailedd");
+        header("Location: ../../signup.php?error=stmtfailedd");
         exit();
     }
 

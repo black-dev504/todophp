@@ -21,7 +21,7 @@ function is_password_correct(bool|array $result, string $pwd): bool {
 }
 
 function login_user(int $id, string $username, string $email): void {
-    require_once 'config_session.inc.php';
+    require_once './config_session.inc.php';
     $_SESSION['user_id'] = $id;
     $_SESSION['username'] = htmlspecialchars($username);
     $_SESSION['email'] = htmlspecialchars($email);

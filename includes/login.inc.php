@@ -7,39 +7,41 @@ if($_SERVER['REQUEST_METHOD'] ==='POST'){
     $username = $_POST['username'];
     $pwd = $_POST['password'];
 
+    
 
 try {
-    require_once 'login.model.inc.php';
-    require_once 'login.contr.inc.php';
+    require_once 'models/login.model.inc.php';
+    require_once 'controls/login.contr.inc.php';
+    require_once 'config_session.inc.php';
 
     // ERROR HANDLING
     $errors = [];
     if(is_input_empty($username, $pwd)){
         $errors['emptyfields'] = 'Please fill in all fields.';
+        throwValidationError($errors);
     }
+
     $result = get_user($pdo, $username);
 
     if(!does_user_exist($result)){
         $errors['user'] = 'User does not exist.';
+        throwValidationError($errors);
+
     }
 
     if(!is_password_correct($result, $pwd)){
         $errors['password'] = 'Incorrect password.';
+        throwValidationError($errors);
+
     }
 
-
-    require_once 'config_session.inc.php';
-    if($errors){
-        $_SESSION['login_errors'] = $errors;
-        header('Location: ../login.php?error=loginfailed');
-        die();
-    } else {
+    
+    
         login_user( $result['id'], $result['username'], $result['email']);
-        $pdo = null; // Close the connection
-        $stmt = null; // Close the statement
+        $pdo = null; 
         header("Location: ../index.php?login=success");
         die();
-    }
+    
 
 } catch (PDOException $e) {
     die("Query failed: " . $e->getMessage());
@@ -48,4 +50,10 @@ try {
 }  else {
     header('Location: ../login.php?error=invalidrequest');
     die('Invalid request method.');  
+}
+
+function throwValidationError(array $message) {
+    $_SESSION['errors'] = $message;
+    header('Location: ../login.php?error=loginfailed');
+    die();
 }
